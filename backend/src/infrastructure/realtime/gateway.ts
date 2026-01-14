@@ -12,6 +12,7 @@ import {
   type UserRepository
 } from "../../application/ports/repositories";
 import { type ClientToServerEvent, type ServerToClientEvent } from "./contracts";
+import { PresenceTracker } from "./presence";
 
 export interface RealtimeDependencies {
   users: UserRepository;
@@ -19,6 +20,8 @@ export interface RealtimeDependencies {
   messages: MessageRepository;
   clock: Clock;
 }
+
+const HEARTBEAT_TTL_MS = 30_000;
 
 const joinRoomSchema = z.object({
   roomId: z.string().min(1)
@@ -46,11 +49,24 @@ export function createRealtimeGateway(httpServer: HttpServer, deps: RealtimeDepe
   const io = new SocketServer(httpServer, {
     transports: ["polling", "websocket"]
   });
+  const presence = new PresenceTracker(deps.clock, HEARTBEAT_TTL_MS);
+  const heartbeat = setInterval(() => {
+    const expired = presence.getExpiredUserIds();
+    for (const userId of expired) {
+      const offline = presence.markOffline(userId);
+      io.emit("server_event", { type: "presence_update", payload: offline });
+    }
+  }, HEARTBEAT_TTL_MS);
+  heartbeat.unref();
 
   io.on("connection", (socket) => {
+    let currentUserId: string | null = null;
     socket.on("client_event", async (event: ClientToServerEvent) => {
       try {
         const userId = requireUserId(socket);
+        currentUserId = userId;
+        const online = presence.markOnline(userId);
+        io.emit("server_event", { type: "presence_update", payload: online });
 
         if (event.type === "join_room") {
           const payload = joinRoomSchema.parse(event.payload);
@@ -117,6 +133,14 @@ export function createRealtimeGateway(httpServer: HttpServer, deps: RealtimeDepe
         };
         socket.emit("server_event", response);
       }
+    });
+
+    socket.on("disconnect", () => {
+      if (!currentUserId) {
+        return;
+      }
+      const offline = presence.markOffline(currentUserId);
+      io.emit("server_event", { type: "presence_update", payload: offline });
     });
   });
 
