@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createMessage, createPasswordHash, createRoom, createUser } from "../../src/domain";
-import { UnauthorizedError } from "../../src/application/errors";
-import { listMessages } from "../../src/application/use-cases/list-messages";
-import { sendMessage } from "../../src/application/use-cases/send-message";
+import { createMessage, createPasswordHash, createRoom, createUser } from "../../src/domain"
+import { UnauthorizedError } from "../../src/application/errors"
+import { listMessages } from "../../src/application/use-cases/list-messages"
+import { sendMessage } from "../../src/application/use-cases/send-message"
 import {
   FixedClock,
   InMemoryMessageRepository,

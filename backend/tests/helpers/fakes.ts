@@ -13,14 +13,14 @@ import {
   createRoomId,
   createUserId
 } from "../../src/domain";
-import { type Clock } from "../../src/application/ports/clock";
-import { type IdGenerator } from "../../src/application/ports/ids";
+import { type Clock } from "../../src/application/ports/clock"
+import { type IdGenerator } from "../../src/application/ports/ids"
 import {
   type MessageRepository,
   type RoomRepository,
   type UserRepository
 } from "../../src/application/ports/repositories";
-import { type PasswordHasher, type TokenIssuer } from "../../src/application/ports/security";
+import { type PasswordHasher, type TokenIssuer } from "../../src/application/ports/security"
 
 export class FixedClock implements Clock {
   constructor(private readonly fixed: Date) {}

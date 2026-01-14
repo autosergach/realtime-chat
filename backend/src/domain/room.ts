@@ -1,5 +1,5 @@
-import { ValidationError } from "./errors";
-import { type RoomId, type UserId } from "./value-objects";
+import { ValidationError } from "./errors"
+import { type RoomId, type UserId } from "./value-objects"
 
 export interface Room {
   readonly id: RoomId;

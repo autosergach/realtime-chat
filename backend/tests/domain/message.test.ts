@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { createMessage } from "../../src/domain";
-import { ids } from "../helpers/fakes";
+import { createMessage } from "../../src/domain"
+import { ids } from "../helpers/fakes"
 
 describe("message", () => {
   it("trims message content", () => {

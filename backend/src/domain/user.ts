@@ -1,4 +1,4 @@
-import { type Email, type PasswordHash, type UserId } from "./value-objects";
+import { type Email, type PasswordHash, type UserId } from "./value-objects"
 
 export interface User {
   readonly id: UserId;

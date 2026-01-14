@@ -1,7 +1,7 @@
-import { createRoomId, createUserId } from "../../domain";
-import { NotFoundError, UnauthorizedError } from "../errors";
-import { type ListMessagesRequest, type MessageResponse } from "../dto/messages";
-import { type MessageRepository, type RoomRepository } from "../ports/repositories";
+import { createRoomId, createUserId } from "../../domain"
+import { NotFoundError, UnauthorizedError } from "../errors"
+import { type ListMessagesRequest, type MessageResponse } from "../dto/messages"
+import { type MessageRepository, type RoomRepository } from "../ports/repositories"
 
 interface ListMessagesDeps {
   rooms: RoomRepository;

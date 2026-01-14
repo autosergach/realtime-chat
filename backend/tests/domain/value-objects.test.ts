@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createEmail } from "../../src/domain";
+import { createEmail } from "../../src/domain"
 
 describe("value objects", () => {
   it("normalizes email", () => {

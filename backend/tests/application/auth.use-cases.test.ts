@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createEmail, createPasswordHash, createUser } from "../../src/domain";
-import { ConflictError, UnauthorizedError } from "../../src/application/errors";
-import { loginUser } from "../../src/application/use-cases/login-user";
-import { registerUser } from "../../src/application/use-cases/register-user";
+import { createEmail, createPasswordHash, createUser } from "../../src/domain"
+import { ConflictError, UnauthorizedError } from "../../src/application/errors"
+import { loginUser } from "../../src/application/use-cases/login-user"
+import { registerUser } from "../../src/application/use-cases/register-user"
 import {
   AcceptAllHasher,
   FixedClock,

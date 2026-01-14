@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { createRoom } from "../../src/domain";
-import { ids } from "../helpers/fakes";
+import { createRoom } from "../../src/domain"
+import { ids } from "../helpers/fakes"
 
 describe("room", () => {
   it("trims and creates room", () => {

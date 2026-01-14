@@ -1,5 +1,5 @@
-import { ValidationError } from "./errors";
-import { type Brand } from "./types";
+import { ValidationError } from "./errors"
+import { type Brand } from "./types"
 
 export type UserId = Brand<string, "UserId">;
 export type RoomId = Brand<string, "RoomId">;

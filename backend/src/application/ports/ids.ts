@@ -1,4 +1,4 @@
-import { type MessageId, type RoomId, type UserId } from "../../domain";
+import { type MessageId, type RoomId, type UserId } from "../../domain"
 
 export interface IdGenerator {
   nextUserId(): UserId;

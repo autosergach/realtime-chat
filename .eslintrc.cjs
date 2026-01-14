@@ -23,12 +23,18 @@ module.exports = {
   overrides: [
     {
       files: ["backend/**/*.ts"],
+      rules: {
+        "import/no-unresolved": "off"
+      },
       env: {
         node: true
       }
     },
     {
       files: ["frontend/**/*.ts", "frontend/**/*.tsx"],
+      rules: {
+        "import/no-unresolved": "off"
+      },
       env: {
         browser: true
       }

@@ -1,9 +1,9 @@
-import { createEmail } from "../../domain";
-import { UnauthorizedError } from "../errors";
-import { type AuthResponse, type LoginRequest } from "../dto/auth";
-import { type Clock } from "../ports/clock";
-import { type UserRepository } from "../ports/repositories";
-import { type PasswordHasher, type TokenIssuer } from "../ports/security";
+import { createEmail } from "../../domain"
+import { UnauthorizedError } from "../errors"
+import { type AuthResponse, type LoginRequest } from "../dto/auth"
+import { type Clock } from "../ports/clock"
+import { type UserRepository } from "../ports/repositories"
+import { type PasswordHasher, type TokenIssuer } from "../ports/security"
 
 interface LoginUserDeps {
   users: UserRepository;

@@ -1,4 +1,4 @@
-import { type PasswordHash, type UserId } from "../../domain";
+import { type PasswordHash, type UserId } from "../../domain"
 
 export interface PasswordHasher {
   hash(password: string): Promise<PasswordHash>;

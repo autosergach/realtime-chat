@@ -1,10 +1,10 @@
-import { createEmail, createUser } from "../../domain";
-import { ConflictError } from "../errors";
-import { type AuthResponse, type RegisterRequest } from "../dto/auth";
-import { type Clock } from "../ports/clock";
-import { type IdGenerator } from "../ports/ids";
-import { type UserRepository } from "../ports/repositories";
-import { type PasswordHasher, type TokenIssuer } from "../ports/security";
+import { createEmail, createUser } from "../../domain"
+import { ConflictError } from "../errors"
+import { type AuthResponse, type RegisterRequest } from "../dto/auth"
+import { type Clock } from "../ports/clock"
+import { type IdGenerator } from "../ports/ids"
+import { type UserRepository } from "../ports/repositories"
+import { type PasswordHasher, type TokenIssuer } from "../ports/security"
 
 interface RegisterUserDeps {
   users: UserRepository;

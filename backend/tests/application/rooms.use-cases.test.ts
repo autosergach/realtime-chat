@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createPasswordHash, createRoom, createUser } from "../../src/domain";
-import { NotFoundError } from "../../src/application/errors";
-import { createRoomUseCase } from "../../src/application/use-cases/create-room";
-import { joinRoom } from "../../src/application/use-cases/join-room";
+import { createPasswordHash, createRoom, createUser } from "../../src/domain"
+import { NotFoundError } from "../../src/application/errors"
+import { createRoomUseCase } from "../../src/application/use-cases/create-room"
+import { joinRoom } from "../../src/application/use-cases/join-room"
 import {
   FixedClock,
   InMemoryRoomRepository,

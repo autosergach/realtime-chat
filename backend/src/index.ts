@@ -1,1 +1,1 @@
-export const appName = "realtime-chat-backend";
+export * from "./infrastructure"

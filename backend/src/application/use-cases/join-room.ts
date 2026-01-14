@@ -1,8 +1,8 @@
-import { createRoomId, createUserId } from "../../domain";
-import { NotFoundError } from "../errors";
-import { type JoinRoomRequest } from "../dto/rooms";
-import { type Clock } from "../ports/clock";
-import { type RoomRepository, type UserRepository } from "../ports/repositories";
+import { createRoomId, createUserId } from "../../domain"
+import { NotFoundError } from "../errors"
+import { type JoinRoomRequest } from "../dto/rooms"
+import { type Clock } from "../ports/clock"
+import { type RoomRepository, type UserRepository } from "../ports/repositories"
 
 interface JoinRoomDeps {
   rooms: RoomRepository;
