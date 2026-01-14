@@ -1,57 +1,57 @@
-# Архитектура
+# Architecture
 
-## Цели
-- Четкие границы: domain не зависит ни от чего.
-- Предсказуемость: простые, проверяемые юзкейсы.
-- Реальное время: устойчивые контракты сообщений и явные гарантии доставки.
+## Goals
+- Clear boundaries: domain depends on nothing.
+- Predictability: simple, testable use cases.
+- Real time: stable message contracts and explicit delivery guarantees.
 
-## Обзор
-Система разделена на три слоя backend (domain/application/infrastructure) и отдельный frontend. Взаимодействие клиента с сервером идет через HTTP (аутентификация и справочники) и Socket.IO (реальное время).
+## Overview
+The system is split into three backend layers (domain/application/infrastructure) and a separate frontend. Client-to-server interaction uses HTTP (auth and REST endpoints) and Socket.IO (real-time events).
 
-## Слои backend
+## Backend layers
 ### Domain
-- Сущности: User, Room, Message.
+- Entities: User, Room, Message.
 - Value Objects: UserId, RoomId, MessageId.
-- Доменные ошибки и инварианты.
+- Domain errors and invariants.
 
 ### Application
-- Юзкейсы: register/login, createRoom, joinRoom, sendMessage, listMessages.
-- Порты: UserRepository, RoomRepository, MessageRepository, PasswordHasher, TokenIssuer, Clock.
-- DTO и политики доступа.
+- Use cases: register/login, createRoom, joinRoom, sendMessage, listMessages.
+- Ports: UserRepository, RoomRepository, MessageRepository, PasswordHasher, TokenIssuer, Clock.
+- DTOs and access policies.
 
 ### Infrastructure
-- HTTP (Fastify): контроллеры и маршруты.
-- Socket.IO gateway: маршрутизация событий и presence.
-- Persistence: Prisma + PostgreSQL (SQLite в dev).
-- DI и конфигурация.
+- HTTP (Fastify): controllers and routes.
+- Socket.IO gateway: event routing and presence.
+- Persistence: Prisma + PostgreSQL (SQLite in dev).
+- DI and configuration.
 
-## Контракт сообщений (Socket.IO)
-Клиент -> сервер:
+## Message contract (Socket.IO)
+Client -> server:
 - join_room: { roomId }
 - send_message: { roomId, messageId, content }
-- typing (опционально): { roomId }
+- typing (optional): { roomId }
 
-Сервер -> клиент:
+Server -> client:
 - room_joined: { roomId }
 - message: { roomId, message }
 - presence_update: { userId, status, lastSeenAt }
 - error: { code, message, traceId }
 
-### Семантика доставки
-- Доставка: at-least-once.
-- Идемпотентность: messageId генерируется клиентом, сервер хранит и отклоняет дубликаты.
-- Порядок: best-effort порядок внутри комнаты (order by createdAt).
+### Delivery semantics
+- Delivery: at-least-once.
+- Idempotency: messageId is generated on the client; the server stores and rejects duplicates.
+- Ordering: best-effort ordering within a room (order by createdAt).
 
-## Data model (черновик)
+## Data model (draft)
 - User: id, email, passwordHash, createdAt, lastSeenAt.
 - Room: id, name, isPrivate, createdAt, createdBy.
 - Message: id, roomId, authorId, content, createdAt.
 - RoomMember: roomId, userId, joinedAt.
 
-## Тестирование
+## Testing
 - Unit: domain/application.
 - Integration: HTTP + Socket.IO.
 - E2E: login -> join room -> send message -> receive.
 
-## Документация решений
-См. ADR: `docs/adr/`.
+## Decision records
+See ADRs: `docs/adr/`.

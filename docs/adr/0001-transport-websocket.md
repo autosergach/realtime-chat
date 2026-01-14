@@ -1,29 +1,29 @@
-# ADR 0001: Transport для realtime
+# ADR 0001: Transport for realtime
 
-## Статус
-Принято
+## Status
+Accepted
 
-## Контекст
-Нужен двунаправленный канал для обмена сообщениями, presence и событиями комнат. Рассматривали:
+## Context
+We need a bidirectional channel for messages, presence, and room events. Considered:
 - WebSocket
 - SSE
 - Long-polling
 
-Критичны двунаправленность, низкая задержка и простая модель событий для чата.
+Key requirements: bidirectionality, low latency, and a simple event model for chat.
 
-## Решение
-Выбираем WebSocket как основной транспорт. Для устойчивости к сетевым ограничениям будем использовать Socket.IO, который поддерживает fallback на polling. В серверной конфигурации оставляем разрешенными транспорты `polling` и `websocket` (дефолт Socket.IO v4).
+## Decision
+Choose WebSocket as the primary transport. To handle restrictive networks, we use Socket.IO, which supports polling fallback. Server configuration keeps `polling` and `websocket` transports enabled (Socket.IO v4 defaults).
 
-## Последствия
-Плюсы:
-- Низкая задержка и двунаправленность для presence/typing.
-- Единый контракт событий.
-- Устойчивость в средах, где WebSocket недоступен.
+## Consequences
+Pros:
+- Low latency and bidirectionality for presence/typing.
+- Single event contract.
+- Works in environments where pure WebSocket is blocked.
 
-Минусы:
-- Дополнительный протокольный слой (Socket.IO) вместо «чистого» WebSocket.
-- Чуть сложнее наблюдаемость и отладка, чем в HTTP-only подходах.
+Cons:
+- Additional protocol layer (Socket.IO) on top of WebSocket.
+- Slightly harder to observe/debug than HTTP-only approaches.
 
-## Альтернативы
-- SSE: проще в реализации, но только сервер -> клиент и требует отдельного канала для client -> server.
-- Long-polling: высокая задержка и лишняя нагрузка на сервер, неприемлемо для чата.
+## Alternatives
+- SSE: simpler to implement, but only server -> client and requires a second channel for client -> server.
+- Long-polling: higher latency and extra load, not suitable for chat.
