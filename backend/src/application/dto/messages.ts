@@ -1,16 +1,20 @@
-import { type MessageId, type RoomId, type UserId } from "../../domain";
-
 export interface SendMessageRequest {
-  roomId: RoomId;
-  authorId: UserId;
-  messageId: MessageId;
+  roomId: string;
+  authorId: string;
+  messageId: string;
   content: string;
 }
 
 export interface MessageResponse {
-  id: MessageId;
-  roomId: RoomId;
-  authorId: UserId;
+  id: string;
+  roomId: string;
+  authorId: string;
   content: string;
   createdAt: Date;
+}
+
+export interface ListMessagesRequest {
+  roomId: string;
+  userId: string;
+  limit: number;
 }

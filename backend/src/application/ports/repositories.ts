@@ -1,8 +1,16 @@
-import { type Message, type MessageId, type Room, type RoomId, type User, type UserId } from "../../domain";
+import {
+  type Email,
+  type Message,
+  type MessageId,
+  type Room,
+  type RoomId,
+  type User,
+  type UserId
+} from "../../domain";
 
 export interface UserRepository {
   findById(id: UserId): Promise<User | null>;
-  findByEmail(email: string): Promise<User | null>;
+  findByEmail(email: Email): Promise<User | null>;
   save(user: User): Promise<void>;
   updateLastSeen(id: UserId, lastSeenAt: Date): Promise<void>;
 }

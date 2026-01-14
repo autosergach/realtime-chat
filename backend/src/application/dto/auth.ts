@@ -1,12 +1,10 @@
-import { type Email } from "../../domain";
-
 export interface RegisterRequest {
-  email: Email;
+  email: string;
   password: string;
 }
 
 export interface LoginRequest {
-  email: Email;
+  email: string;
   password: string;
 }
 
