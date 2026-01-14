@@ -1,0 +1,40 @@
+:root {
+  color-scheme: light;
+  font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #111827;
+  background: radial-gradient(circle at top left, #fef3c7, #ecfeff 40%, #ffffff 75%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+}
+
+.container {
+  max-width: 720px;
+  width: 100%;
+  padding: 32px;
+  border-radius: 24px;
+  background: #ffffffcc;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.1);
+}
+
+h1 {
+  margin-top: 0;
+  font-size: 2.5rem;
+}
