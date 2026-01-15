@@ -83,6 +83,3 @@ npm run test
 - `docs/adr/0001-transport-websocket.md`
 - `docs/adr/0002-realtime-library-socketio.md`
 - `docs/adr/0003-persistence-prisma-postgres.md`
-
-## Deployment
-Backend (Render): see `docs/deploy/render-backend.md`.
