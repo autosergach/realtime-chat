@@ -15,6 +15,7 @@ import { ApplicationError } from "../../application/errors";
 import { DomainError } from "../../domain";
 import { type ClientToServerEvent, type ServerToClientEvent } from "./contracts";
 import { PresenceTracker } from "./presence";
+import { env } from "../config/env";
 
 export interface RealtimeDependencies {
   users: UserRepository;
@@ -62,7 +63,12 @@ function toRealtimeErrorPayload(error: unknown) {
 
 export function createRealtimeGateway(httpServer: HttpServer, deps: RealtimeDependencies) {
   const io = new SocketServer(httpServer, {
-    transports: ["polling", "websocket"]
+    transports: ["polling", "websocket"],
+    cors: {
+      origin: env.corsOrigin,
+      methods: ["GET", "POST"],
+      allowedHeaders: ["x-user-id", "authorization"]
+    }
   });
   const presence = new PresenceTracker(deps.clock, HEARTBEAT_TTL_MS);
   const heartbeat = setInterval(() => {

@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 import { type Clock } from "../../application/ports/clock"
 import { type IdGenerator } from "../../application/ports/ids"
 import {
@@ -7,6 +8,7 @@ import {
   type UserRepository
 } from "../../application/ports/repositories";
 import { type PasswordHasher, type TokenIssuer } from "../../application/ports/security"
+import { env } from "../config/env";
 import { errorHandler } from "./error-handler"
 import { attachTraceId } from "./trace"
 import { registerAuthRoutes } from "./routes/auth"
@@ -27,6 +29,12 @@ export function createServer(deps: HttpDependencies) {
 
   app.setErrorHandler(errorHandler);
   app.addHook("onRequest", attachTraceId);
+  app.register(cors, {
+    origin: env.corsOrigin,
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["content-type", "x-user-id", "authorization"],
+    credentials: false
+  });
 
   app.get("/health", async () => ({ status: "ok" }));
 
