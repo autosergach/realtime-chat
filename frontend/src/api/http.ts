@@ -1,8 +1,13 @@
-export async function postJson<TResponse>(url: string, body: unknown): Promise<TResponse> {
+export async function postJson<TResponse>(
+  url: string,
+  body: unknown,
+  headers?: Record<string, string>
+): Promise<TResponse> {
   const response = await fetch(url, {
     method: "POST",
     headers: {
-      "content-type": "application/json"
+      "content-type": "application/json",
+      ...headers
     },
     body: JSON.stringify(body)
   });
