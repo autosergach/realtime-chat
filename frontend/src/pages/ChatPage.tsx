@@ -1,5 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PresenceBadge } from "../components/PresenceBadge";
+import { useSocket } from "../hooks/useSocket";
+import { type ServerToClientEvent } from "../realtime/contracts";
 
 const initialMessages = [
   {
@@ -19,19 +21,39 @@ const initialMessages = [
 export function ChatPage() {
   const [messages, setMessages] = useState(initialMessages);
   const [draft, setDraft] = useState("");
+  const [roomId, setRoomId] = useState("room-1");
+  const [userId, setUserId] = useState("user-1");
+  const [presence, setPresence] = useState<Record<string, "online" | "offline">>({});
+  const { socket, connected } = useSocket(
+    import.meta.env.VITE_REALTIME_URL ?? "http://localhost:3000",
+    userId
+  );
 
   const participants = useMemo(
     () => [
-      { id: "u1", name: "Alex Morgan", status: "online" as const },
-      { id: "u2", name: "Sofia Rios", status: "online" as const },
-      { id: "u3", name: "Jamie Chen", status: "offline" as const }
+      { id: "u1", name: "Alex Morgan", status: presence["u1"] ?? "online" },
+      { id: "u2", name: "Sofia Rios", status: presence["u2"] ?? "online" },
+      { id: "u3", name: "Jamie Chen", status: presence["u3"] ?? "offline" }
     ],
-    []
+    [presence]
   );
 
   function handleSend() {
     if (!draft.trim()) {
       return;
+    }
+    if (socket) {
+      socket.emit("client_event", {
+        type: "send_message",
+        payload: {
+          roomId,
+          messageId:
+            typeof crypto !== "undefined" && crypto.randomUUID
+              ? crypto.randomUUID()
+              : String(Date.now()),
+          content: draft.trim()
+        }
+      });
     }
     setMessages([
       {
@@ -45,13 +67,54 @@ export function ChatPage() {
     setDraft("");
   }
 
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+    const handler = (event: ServerToClientEvent) => {
+      if (event.type === "message") {
+        setMessages((current) => [
+          {
+            id: event.payload.message.id,
+            author: event.payload.message.authorId,
+            content: event.payload.message.content,
+            time: "now"
+          },
+          ...current
+        ]);
+      }
+      if (event.type === "presence_update") {
+        setPresence((current) => ({
+          ...current,
+          [event.payload.userId]: event.payload.status
+        }));
+      }
+    };
+    socket.on("server_event", handler);
+    return () => {
+      socket.off("server_event", handler);
+    };
+  }, [socket]);
+
+  function handleJoinRoom() {
+    if (!socket || !roomId.trim()) {
+      return;
+    }
+    socket.emit("client_event", {
+      type: "join_room",
+      payload: { roomId }
+    });
+  }
+
   return (
     <div className="page chat">
       <header className="chat__header">
         <div>
           <span className="eyebrow">Room</span>
-          <h1>Product Strategy</h1>
-          <p className="muted">At-least-once delivery · 12 members</p>
+          <h1>Realtime delivery room</h1>
+          <p className="muted">
+            {connected ? "Connected" : "Disconnected"} · Room {roomId}
+          </p>
         </div>
         <div className="presence">
           {participants.map((participant) => (
@@ -62,6 +125,17 @@ export function ChatPage() {
 
       <section className="chat__body">
         <div className="message-input">
+          <label className="field">
+            <span>User ID</span>
+            <input value={userId} onChange={(event) => setUserId(event.target.value)} />
+          </label>
+          <label className="field">
+            <span>Room ID</span>
+            <input value={roomId} onChange={(event) => setRoomId(event.target.value)} />
+          </label>
+          <button className="ghost" onClick={handleJoinRoom}>
+            Join room
+          </button>
           <textarea
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
