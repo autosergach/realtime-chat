@@ -1,7 +1,7 @@
 {
   "name": "@realtime-chat/backend",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "dev": "tsx watch src/main.ts",
     "lint": "eslint --no-error-on-unmatched-pattern \"src/**/*.ts\" \"tests/**/*.ts\"",
