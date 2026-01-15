@@ -137,6 +137,11 @@ textarea {
   gap: 12px;
 }
 
+.error {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
 .sidecard {
   background: #0f172a;
   color: #f8fafc;
@@ -204,6 +209,12 @@ textarea {
   margin-top: auto;
   display: grid;
   gap: 4px;
+}
+
+.shell__foot .ghost {
+  margin-top: 8px;
+  color: #f8fafc;
+  border-color: rgba(248, 250, 252, 0.3);
 }
 
 .shell__content {

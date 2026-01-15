@@ -1,6 +1,8 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { useAuth } from "../state/auth";
 
 export function AppShell() {
+  const { session, signOut } = useAuth();
   return (
     <div className="shell">
       <aside className="shell__nav">
@@ -11,7 +13,10 @@ export function AppShell() {
         </nav>
         <div className="shell__foot">
           <span className="muted">Connected as</span>
-          <strong>alex@company.com</strong>
+          <strong>{session?.userId ?? "unknown"}</strong>
+          <button className="ghost" onClick={signOut}>
+            Sign out
+          </button>
         </div>
       </aside>
       <main className="shell__content">

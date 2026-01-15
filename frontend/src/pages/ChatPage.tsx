@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { PresenceBadge } from "../components/PresenceBadge";
 import { useSocket } from "../hooks/useSocket";
 import { type ServerToClientEvent } from "../realtime/contracts";
+import { useAuth } from "../state/auth";
 
 const initialMessages = [
   {
@@ -24,8 +25,9 @@ export function ChatPage() {
   const [draft, setDraft] = useState("");
   const params = useParams();
   const [roomId, setRoomId] = useState(params.roomId ?? "room-1");
-  const [userId, setUserId] = useState("user-1");
   const [presence, setPresence] = useState<Record<string, "online" | "offline">>({});
+  const { session } = useAuth();
+  const userId = session?.userId ?? "user-1";
   const { socket, connected } = useSocket(
     import.meta.env.VITE_REALTIME_URL ?? "http://localhost:3000",
     userId
@@ -133,10 +135,6 @@ export function ChatPage() {
 
       <section className="chat__body">
         <div className="message-input">
-          <label className="field">
-            <span>User ID</span>
-            <input value={userId} onChange={(event) => setUserId(event.target.value)} />
-          </label>
           <label className="field">
             <span>Room ID</span>
             <input value={roomId} onChange={(event) => setRoomId(event.target.value)} />

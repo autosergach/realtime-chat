@@ -1,11 +1,29 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../state/auth";
 
 export function AuthPage() {
   const [mode, setMode] = useState<"login" | "register">("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { signIn, signUp, loading, error } = useAuth();
   const title = useMemo(
     () => (mode === "login" ? "Welcome back" : "Create your account"),
     [mode]
   );
+
+  async function handleSubmit() {
+    if (!email.trim() || !password.trim()) {
+      return;
+    }
+    if (mode === "login") {
+      await signIn(email, password);
+    } else {
+      await signUp(email, password);
+    }
+    navigate("/rooms");
+  }
 
   return (
     <div className="page auth">
@@ -23,16 +41,27 @@ export function AuthPage() {
         <div className="panel__body">
           <label className="field">
             <span>Email</span>
-            <input type="email" placeholder="you@company.com" />
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@company.com"
+            />
           </label>
           <label className="field">
             <span>Password</span>
-            <input type="password" placeholder="••••••••" />
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="••••••••"
+            />
           </label>
 
-          <button className="primary">
-            {mode === "login" ? "Sign in" : "Create account"}
+          <button className="primary" onClick={handleSubmit} disabled={loading}>
+            {loading ? "Please wait..." : mode === "login" ? "Sign in" : "Create account"}
           </button>
+          {error ? <p className="error">{error}</p> : null}
         </div>
 
         <footer className="panel__footer">
