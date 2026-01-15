@@ -166,7 +166,7 @@ export function ChatPage() {
       <header className="chat__header">
         <div>
           <span className="eyebrow">Room</span>
-          <h1>Realtime delivery room</h1>
+          <h1 data-testid="chat-title">Realtime delivery room</h1>
           <p className="muted">
             {connected ? "Connected" : "Disconnected"} · Room {roomId}
           </p>

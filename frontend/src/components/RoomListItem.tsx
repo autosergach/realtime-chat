@@ -17,7 +17,11 @@ export function RoomListItem({ room, onOpen }: RoomListItemProps) {
       </div>
       <div className="room-card__meta">
         {room.unread > 0 ? <span className="badge">{room.unread}</span> : null}
-        <button className="ghost" onClick={() => onOpen(room.id)}>
+        <button
+          className="ghost"
+          onClick={() => onOpen(room.id)}
+          data-testid={`room-open-${room.name}`}
+        >
           Open
         </button>
       </div>

@@ -46,6 +46,7 @@ export function AuthPage() {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="you@company.com"
+              data-testid="auth-email"
             />
           </label>
           <label className="field">
@@ -55,10 +56,16 @@ export function AuthPage() {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder="••••••••"
+              data-testid="auth-password"
             />
           </label>
 
-          <button className="primary" onClick={handleSubmit} disabled={loading}>
+          <button
+            className="primary"
+            onClick={handleSubmit}
+            disabled={loading}
+            data-testid="auth-submit"
+          >
             {loading ? "Please wait..." : mode === "login" ? "Sign in" : "Create account"}
           </button>
           {error ? <p className="error">{error}</p> : null}

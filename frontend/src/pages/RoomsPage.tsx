@@ -86,7 +86,7 @@ export function RoomsPage() {
       <header className="page__header">
         <div>
           <span className="eyebrow">Rooms</span>
-          <h1>Your live channels</h1>
+          <h1 data-testid="rooms-title">Your live channels</h1>
           <p className="muted">Stay close to delivery, incidents, and updates.</p>
         </div>
         <div className="actions">
@@ -94,8 +94,14 @@ export function RoomsPage() {
             value={roomName}
             onChange={(event) => setRoomName(event.target.value)}
             placeholder="New room name"
+            data-testid="rooms-new-name"
           />
-          <button className="primary" onClick={handleCreateRoom} disabled={loading}>
+          <button
+            className="primary"
+            onClick={handleCreateRoom}
+            disabled={loading}
+            data-testid="rooms-create"
+          >
             {loading ? "Creating..." : "Create room"}
           </button>
         </div>
