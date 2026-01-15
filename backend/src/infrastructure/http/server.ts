@@ -8,6 +8,7 @@ import {
 } from "../../application/ports/repositories";
 import { type PasswordHasher, type TokenIssuer } from "../../application/ports/security"
 import { errorHandler } from "./error-handler"
+import { attachTraceId } from "./trace"
 import { registerAuthRoutes } from "./routes/auth"
 import { registerRoomRoutes } from "./routes/rooms"
 
@@ -25,6 +26,7 @@ export function createServer(deps: HttpDependencies) {
   const app = Fastify({ logger: true });
 
   app.setErrorHandler(errorHandler);
+  app.addHook("onRequest", attachTraceId);
 
   app.get("/health", async () => ({ status: "ok" }));
 
