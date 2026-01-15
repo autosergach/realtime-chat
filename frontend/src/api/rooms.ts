@@ -21,3 +21,25 @@ export async function listRooms(apiUrl: string, userId: string) {
     "x-user-id": userId
   });
 }
+
+export interface MessageResponse {
+  id: string;
+  roomId: string;
+  authorId: string;
+  content: string;
+  createdAt: string;
+}
+
+export async function listMessages(
+  apiUrl: string,
+  userId: string,
+  roomId: string,
+  limit = 50
+) {
+  return getJson<MessageResponse[]>(
+    `${apiUrl}/rooms/${roomId}/messages?limit=${limit}`,
+    {
+      "x-user-id": userId
+    }
+  );
+}

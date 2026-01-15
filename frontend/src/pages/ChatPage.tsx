@@ -4,6 +4,7 @@ import { PresenceBadge } from "../components/PresenceBadge";
 import { useSocket } from "../hooks/useSocket";
 import { type ServerToClientEvent } from "../realtime/contracts";
 import { useAuth } from "../state/auth";
+import { listMessages } from "../api/rooms";
 
 const initialMessages = [
   {
@@ -22,6 +23,8 @@ const initialMessages = [
 
 export function ChatPage() {
   const [messages, setMessages] = useState(initialMessages);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
   const params = useParams();
   const [roomId, setRoomId] = useState(params.roomId ?? "room-1");
@@ -32,6 +35,7 @@ export function ChatPage() {
     import.meta.env.VITE_REALTIME_URL ?? "http://localhost:3000",
     userId
   );
+  const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
 
   const participants = useMemo(
     () => [
@@ -116,6 +120,43 @@ export function ChatPage() {
     }
   }, [params.roomId]);
 
+  useEffect(() => {
+    let mounted = true;
+    async function loadHistory() {
+      if (!session || !roomId) {
+        return;
+      }
+      setHistoryLoading(true);
+      setHistoryError(null);
+      try {
+        const history = await listMessages(apiUrl, session.userId, roomId);
+        if (!mounted) {
+          return;
+        }
+        setMessages(
+          history.map((message) => ({
+            id: message.id,
+            author: message.authorId,
+            content: message.content,
+            time: new Date(message.createdAt).toLocaleTimeString()
+          }))
+        );
+      } catch (err) {
+        if (mounted) {
+          setHistoryError(err instanceof Error ? err.message : "Unable to load history.");
+        }
+      } finally {
+        if (mounted) {
+          setHistoryLoading(false);
+        }
+      }
+    }
+    void loadHistory();
+    return () => {
+      mounted = false;
+    };
+  }, [apiUrl, roomId, session]);
+
   return (
     <div className="page chat">
       <header className="chat__header">
@@ -153,6 +194,8 @@ export function ChatPage() {
         </div>
 
         <div className="message-list">
+          {historyLoading ? <p className="muted">Loading history...</p> : null}
+          {historyError ? <p className="error">{historyError}</p> : null}
           {messages.map((message) => (
             <article key={message.id} className="message-card">
               <div className="message-card__meta">
