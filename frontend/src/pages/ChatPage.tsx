@@ -29,6 +29,7 @@ export function ChatPage() {
   const params = useParams();
   const [roomId, setRoomId] = useState(params.roomId ?? "room-1");
   const [presence, setPresence] = useState<Record<string, "online" | "offline">>({});
+  const [realtimeError, setRealtimeError] = useState<string | null>(null);
   const { session } = useAuth();
   const userId = session?.userId ?? "user-1";
   const { socket, connected } = useSocket(
@@ -96,6 +97,9 @@ export function ChatPage() {
           ...current,
           [event.payload.userId]: event.payload.status
         }));
+      }
+      if (event.type === "error") {
+        setRealtimeError(event.payload.message);
       }
     };
     socket.on("server_event", handler);
@@ -196,6 +200,7 @@ export function ChatPage() {
         <div className="message-list">
           {historyLoading ? <p className="muted">Loading history...</p> : null}
           {historyError ? <p className="error">{historyError}</p> : null}
+          {realtimeError ? <p className="error">Realtime: {realtimeError}</p> : null}
           {messages.map((message) => (
             <article key={message.id} className="message-card">
               <div className="message-card__meta">

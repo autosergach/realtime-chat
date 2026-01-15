@@ -11,6 +11,8 @@ import {
   type RoomRepository,
   type UserRepository
 } from "../../application/ports/repositories";
+import { ApplicationError } from "../../application/errors";
+import { DomainError } from "../../domain";
 import { type ClientToServerEvent, type ServerToClientEvent } from "./contracts";
 import { PresenceTracker } from "./presence";
 
@@ -43,6 +45,19 @@ function requireUserId(socket: Socket): string {
     throw new Error("missing x-user-id header");
   }
   return String(header);
+}
+
+function toRealtimeErrorPayload(error: unknown) {
+  if (error instanceof ApplicationError) {
+    return { code: error.code, message: error.message };
+  }
+  if (error instanceof DomainError) {
+    return { code: error.code, message: error.message };
+  }
+  if (error instanceof Error) {
+    return { code: "REALTIME_ERROR", message: error.message };
+  }
+  return { code: "REALTIME_ERROR", message: "unexpected error" };
 }
 
 export function createRealtimeGateway(httpServer: HttpServer, deps: RealtimeDependencies) {
@@ -123,11 +138,12 @@ export function createRealtimeGateway(httpServer: HttpServer, deps: RealtimeDepe
           return;
         }
       } catch (error) {
+        const payload = toRealtimeErrorPayload(error);
         const response: ServerToClientEvent = {
           type: "error",
           payload: {
-            code: "REALTIME_ERROR",
-            message: error instanceof Error ? error.message : "unexpected error",
+            code: payload.code,
+            message: payload.message,
             traceId: String(socket.id)
           }
         };

@@ -13,8 +13,7 @@ export async function postJson<TResponse>(
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Request failed");
+    throw new Error(await extractErrorMessage(response));
   }
 
   return (await response.json()) as TResponse;
@@ -30,9 +29,22 @@ export async function getJson<TResponse>(
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Request failed");
+    throw new Error(await extractErrorMessage(response));
   }
 
   return (await response.json()) as TResponse;
+}
+
+async function extractErrorMessage(response: Response): Promise<string> {
+  const contentType = response.headers.get("content-type") ?? "";
+  if (contentType.includes("application/json")) {
+    try {
+      const data = (await response.json()) as { message?: string; error?: string };
+      return data.message ?? data.error ?? "Request failed";
+    } catch {
+      return "Request failed";
+    }
+  }
+  const text = await response.text();
+  return text || "Request failed";
 }
