@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: realtime-chat-backend
+    runtime: node
+    plan: starter
+    rootDir: .
+    buildCommand: |
+      npm install
+      npm run -w @realtime-chat/backend prisma:generate
+      npm run -w @realtime-chat/backend build
+    startCommand: |
+      npm run -w @realtime-chat/backend prisma:deploy
+      npm run -w @realtime-chat/backend start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
