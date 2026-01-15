@@ -5,9 +5,10 @@ interface RoomListItemProps {
     members: number;
     unread: number;
   };
+  onOpen: (roomId: string) => void;
 }
 
-export function RoomListItem({ room }: RoomListItemProps) {
+export function RoomListItem({ room, onOpen }: RoomListItemProps) {
   return (
     <article className="room-card">
       <div>
@@ -16,7 +17,9 @@ export function RoomListItem({ room }: RoomListItemProps) {
       </div>
       <div className="room-card__meta">
         {room.unread > 0 ? <span className="badge">{room.unread}</span> : null}
-        <button className="ghost">Open</button>
+        <button className="ghost" onClick={() => onOpen(room.id)}>
+          Open
+        </button>
       </div>
     </article>
   );

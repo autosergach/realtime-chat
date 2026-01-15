@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 import { PresenceBadge } from "../components/PresenceBadge";
 import { useSocket } from "../hooks/useSocket";
 import { type ServerToClientEvent } from "../realtime/contracts";
@@ -21,7 +22,8 @@ const initialMessages = [
 export function ChatPage() {
   const [messages, setMessages] = useState(initialMessages);
   const [draft, setDraft] = useState("");
-  const [roomId, setRoomId] = useState("room-1");
+  const params = useParams();
+  const [roomId, setRoomId] = useState(params.roomId ?? "room-1");
   const [userId, setUserId] = useState("user-1");
   const [presence, setPresence] = useState<Record<string, "online" | "offline">>({});
   const { socket, connected } = useSocket(
@@ -105,6 +107,12 @@ export function ChatPage() {
       payload: { roomId }
     });
   }
+
+  useEffect(() => {
+    if (params.roomId) {
+      setRoomId(params.roomId);
+    }
+  }, [params.roomId]);
 
   return (
     <div className="page chat">

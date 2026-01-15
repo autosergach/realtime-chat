@@ -12,6 +12,7 @@ export function App() {
         <Route element={<AppShell />}>
           <Route path="/rooms" element={<RoomsPage />} />
           <Route path="/chat" element={<ChatPage />} />
+          <Route path="/chat/:roomId" element={<ChatPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>

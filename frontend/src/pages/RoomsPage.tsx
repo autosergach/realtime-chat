@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { RoomListItem } from "../components/RoomListItem";
 
 const initialRooms = [
@@ -10,6 +11,7 @@ const initialRooms = [
 export function RoomsPage() {
   const [rooms, setRooms] = useState(initialRooms);
   const [roomName, setRoomName] = useState("");
+  const navigate = useNavigate();
 
   function handleCreateRoom() {
     if (!roomName.trim()) {
@@ -47,7 +49,7 @@ export function RoomsPage() {
 
       <section className="room-grid">
         {rooms.map((room) => (
-          <RoomListItem key={room.id} room={room} />
+          <RoomListItem key={room.id} room={room} onOpen={(id) => navigate(`/chat/${id}`)} />
         ))}
       </section>
     </div>
