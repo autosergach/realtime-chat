@@ -31,10 +31,10 @@ export function ChatPage() {
   const [presence, setPresence] = useState<Record<string, "online" | "offline">>({});
   const [realtimeError, setRealtimeError] = useState<string | null>(null);
   const { session } = useAuth();
-  const userId = session?.userId ?? "user-1";
+  const token = session?.accessToken ?? null;
   const { socket, connected } = useSocket(
     import.meta.env.VITE_REALTIME_URL ?? "http://localhost:3000",
-    userId
+    token
   );
   const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
 
@@ -133,7 +133,7 @@ export function ChatPage() {
       setHistoryLoading(true);
       setHistoryError(null);
       try {
-        const history = await listMessages(apiUrl, session.userId, roomId);
+        const history = await listMessages(apiUrl, session.accessToken, roomId);
         if (!mounted) {
           return;
         }

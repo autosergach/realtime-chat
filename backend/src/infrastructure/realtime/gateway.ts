@@ -11,11 +11,12 @@ import {
   type RoomRepository,
   type UserRepository
 } from "../../application/ports/repositories";
-import { ApplicationError } from "../../application/errors";
+import { ApplicationError, UnauthorizedError } from "../../application/errors";
 import { DomainError } from "../../domain";
 import { type ClientToServerEvent, type ServerToClientEvent } from "./contracts";
 import { PresenceTracker } from "./presence";
 import { env } from "../config/env";
+import { verifyJwt } from "../http/jwt";
 
 export interface RealtimeDependencies {
   users: UserRepository;
@@ -41,11 +42,11 @@ const typingSchema = z.object({
 });
 
 function requireUserId(socket: Socket): string {
-  const header = socket.handshake.headers["x-user-id"];
-  if (!header || Array.isArray(header)) {
-    throw new Error("missing x-user-id header");
+  const authHeader = socket.handshake.auth?.token;
+  if (!authHeader || typeof authHeader !== "string") {
+    throw new UnauthorizedError("missing auth token");
   }
-  return String(header);
+  return verifyJwt(`Bearer ${authHeader}`);
 }
 
 function toRealtimeErrorPayload(error: unknown) {
@@ -67,7 +68,7 @@ export function createRealtimeGateway(httpServer: HttpServer, deps: RealtimeDepe
     cors: {
       origin: env.corsOrigin,
       methods: ["GET", "POST"],
-      allowedHeaders: ["x-user-id", "authorization"]
+      allowedHeaders: ["authorization"]
     }
   });
   const presence = new PresenceTracker(deps.clock, HEARTBEAT_TTL_MS);

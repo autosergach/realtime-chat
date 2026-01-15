@@ -25,7 +25,7 @@ export function RoomsPage() {
       setLoading(true);
       setError(null);
       try {
-        const data = await listRooms(apiUrl, session.userId);
+      const data = await listRooms(apiUrl, session.accessToken);
         if (mounted) {
           setRooms(
             data.map((room) => ({
@@ -63,7 +63,7 @@ export function RoomsPage() {
     setLoading(true);
     setError(null);
     try {
-      const created = await createRoom(apiUrl, session.userId, roomName.trim());
+      const created = await createRoom(apiUrl, session.accessToken, roomName.trim());
       setRooms([
         {
           id: created.id,

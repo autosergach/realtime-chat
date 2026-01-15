@@ -8,6 +8,8 @@
 ## Overview
 The system is split into three backend layers (domain/application/infrastructure) and a separate frontend. Client-to-server interaction uses HTTP (auth and REST endpoints) and Socket.IO (real-time events).
 
+Authentication is JWT-based: HTTP requests use `Authorization: Bearer <token>`, and Socket.IO uses a token in the handshake auth payload.
+
 ## Backend layers
 ### Domain
 - Entities: User, Room, Message.

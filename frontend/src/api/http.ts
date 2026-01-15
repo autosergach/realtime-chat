@@ -1,13 +1,13 @@
 export async function postJson<TResponse>(
   url: string,
   body: unknown,
-  headers?: Record<string, string>
+  token?: string
 ): Promise<TResponse> {
   const response = await fetch(url, {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      ...headers
+      ...(token ? { authorization: `Bearer ${token}` } : {})
     },
     body: JSON.stringify(body)
   });
@@ -21,11 +21,11 @@ export async function postJson<TResponse>(
 
 export async function getJson<TResponse>(
   url: string,
-  headers?: Record<string, string>
+  token?: string
 ): Promise<TResponse> {
   const response = await fetch(url, {
     method: "GET",
-    headers
+    headers: token ? { authorization: `Bearer ${token}` } : undefined
   });
 
   if (!response.ok) {

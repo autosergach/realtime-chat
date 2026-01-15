@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import { createServer as createHttpServer } from "node:http";
 import { io as createClient, type Socket as ClientSocket } from "socket.io-client";
+import jwt from "jsonwebtoken";
 import { createRealtimeGateway } from "../../src/infrastructure/realtime/gateway";
 import {
   InMemoryMessageRepository,
@@ -63,9 +64,10 @@ describe("realtime gateway", () => {
   });
 
   it("joins room and receives room_joined", async () => {
+    const token = jwt.sign({ sub: ids.user }, "dev-secret");
     socket = createClient(baseUrl, {
-      extraHeaders: {
-        "x-user-id": ids.user
+      auth: {
+        token
       }
     });
 
@@ -87,9 +89,10 @@ describe("realtime gateway", () => {
   });
 
   it("broadcasts message to room", async () => {
+    const token = jwt.sign({ sub: ids.user }, "dev-secret");
     socket = createClient(baseUrl, {
-      extraHeaders: {
-        "x-user-id": ids.user
+      auth: {
+        token
       }
     });
 

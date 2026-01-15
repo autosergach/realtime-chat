@@ -32,7 +32,7 @@ export function createServer(deps: HttpDependencies) {
   app.register(cors, {
     origin: env.corsOrigin,
     methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["content-type", "x-user-id", "authorization"],
+    allowedHeaders: ["content-type", "authorization"],
     credentials: false
   });
 

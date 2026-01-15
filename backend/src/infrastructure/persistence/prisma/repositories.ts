@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "./client";
 import {
   type Message,
@@ -9,7 +10,14 @@ import {
   type UserId,
   type Email
 } from "../../../domain";
+import { ConflictError } from "../../../application/errors";
 import { type MessageRepository, type RoomRepository, type UserRepository } from "../../../application/ports/repositories";
+
+function isUniqueConstraintError(error: unknown): boolean {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002"
+  );
+}
 
 export class PrismaUserRepository implements UserRepository {
   async findById(id: UserId): Promise<User | null> {
@@ -98,13 +106,20 @@ export class PrismaRoomRepository implements RoomRepository {
   }
 
   async addMember(roomId: RoomId, userId: UserId, joinedAt: Date): Promise<void> {
-    await prisma.roomMember.create({
-      data: {
-        roomId,
-        userId,
-        joinedAt
+    try {
+      await prisma.roomMember.create({
+        data: {
+          roomId,
+          userId,
+          joinedAt
+        }
+      });
+    } catch (error) {
+      if (isUniqueConstraintError(error)) {
+        return;
       }
-    });
+      throw error;
+    }
   }
 
   async isMember(roomId: RoomId, userId: UserId): Promise<boolean> {
@@ -148,14 +163,21 @@ export class PrismaMessageRepository implements MessageRepository {
   }
 
   async save(message: Message): Promise<void> {
-    await prisma.message.create({
-      data: {
-        id: message.id,
-        roomId: message.roomId,
-        authorId: message.authorId,
-        content: message.content,
-        createdAt: message.createdAt
+    try {
+      await prisma.message.create({
+        data: {
+          id: message.id,
+          roomId: message.roomId,
+          authorId: message.authorId,
+          content: message.content,
+          createdAt: message.createdAt
+        }
+      });
+    } catch (error) {
+      if (isUniqueConstraintError(error)) {
+        throw new ConflictError("message already exists");
       }
-    });
+      throw error;
+    }
   }
 }

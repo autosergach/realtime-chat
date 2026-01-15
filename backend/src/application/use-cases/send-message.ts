@@ -1,5 +1,5 @@
 import { createMessage, createMessageId, createRoomId, createUserId } from "../../domain"
-import { NotFoundError, UnauthorizedError } from "../errors"
+import { ConflictError, NotFoundError, UnauthorizedError } from "../errors"
 import { type MessageResponse, type SendMessageRequest } from "../dto/messages"
 import { type Clock } from "../ports/clock"
 import { type MessageRepository, type RoomRepository } from "../ports/repositories"
@@ -47,7 +47,23 @@ export async function sendMessage(
     createdAt: deps.clock.now()
   });
 
-  await deps.messages.save(message);
+  try {
+    await deps.messages.save(message);
+  } catch (error) {
+    if (error instanceof ConflictError) {
+      const existingMessage = await deps.messages.findById(message.id);
+      if (existingMessage) {
+        return {
+          id: existingMessage.id,
+          roomId: existingMessage.roomId,
+          authorId: existingMessage.authorId,
+          content: existingMessage.content,
+          createdAt: existingMessage.createdAt
+        };
+      }
+    }
+    throw error;
+  }
 
   return {
     id: message.id,

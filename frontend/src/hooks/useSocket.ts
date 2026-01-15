@@ -1,20 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { io } from "socket.io-client";
 
-export function useSocket(url: string, userId: string | null) {
+export function useSocket(url: string, token: string | null) {
   const [connected, setConnected] = useState(false);
 
   const socket = useMemo(() => {
-    if (!userId) {
+    if (!token) {
       return null;
     }
     return io(url, {
       autoConnect: false,
-      extraHeaders: {
-        "x-user-id": userId
+      auth: {
+        token
       }
     });
-  }, [url, userId]);
+  }, [url, token]);
 
   useEffect(() => {
     if (!socket) {

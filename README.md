@@ -46,6 +46,10 @@ npm install
 ```
 cp backend/.env.example backend/.env
 ```
+Update `backend/.env` with:
+- `DATABASE_URL` (local Postgres)
+- `JWT_SECRET`
+- `CORS_ORIGIN` (frontend URL, e.g. `http://localhost:5173`)
 
 3) Generate Prisma client and run migrations:
 ```
@@ -62,6 +66,9 @@ npm run -w @realtime-chat/backend dev
 ```
 npm run -w @realtime-chat/frontend dev
 ```
+Set in your environment (or `.env` for Vite):
+- `VITE_API_URL` (e.g. `http://localhost:3000`)
+- `VITE_REALTIME_URL` (same as backend for Socket.IO)
 
 ## How to run tests
 ```

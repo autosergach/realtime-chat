@@ -6,20 +6,15 @@ export interface RoomSummary {
   isPrivate: boolean;
 }
 
-export async function createRoom(apiUrl: string, userId: string, name: string) {
+export async function createRoom(apiUrl: string, token: string, name: string) {
   return postJson<RoomSummary>(`${apiUrl}/rooms`, {
     name,
-    isPrivate: false,
-    createdBy: userId
-  }, {
-    "x-user-id": userId
-  });
+    isPrivate: false
+  }, token);
 }
 
-export async function listRooms(apiUrl: string, userId: string) {
-  return getJson<RoomSummary[]>(`${apiUrl}/rooms`, {
-    "x-user-id": userId
-  });
+export async function listRooms(apiUrl: string, token: string) {
+  return getJson<RoomSummary[]>(`${apiUrl}/rooms`, token);
 }
 
 export interface MessageResponse {
@@ -32,14 +27,9 @@ export interface MessageResponse {
 
 export async function listMessages(
   apiUrl: string,
-  userId: string,
+  token: string,
   roomId: string,
   limit = 50
 ) {
-  return getJson<MessageResponse[]>(
-    `${apiUrl}/rooms/${roomId}/messages?limit=${limit}`,
-    {
-      "x-user-id": userId
-    }
-  );
+  return getJson<MessageResponse[]>(`${apiUrl}/rooms/${roomId}/messages?limit=${limit}`, token);
 }
