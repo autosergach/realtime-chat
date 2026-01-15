@@ -3,6 +3,7 @@ import { createPasswordHash, createRoom, createUser } from "../../src/domain"
 import { NotFoundError } from "../../src/application/errors"
 import { createRoomUseCase } from "../../src/application/use-cases/create-room"
 import { joinRoom } from "../../src/application/use-cases/join-room"
+import { listRooms } from "../../src/application/use-cases/list-rooms"
 import {
   FixedClock,
   InMemoryRoomRepository,
@@ -81,5 +82,32 @@ describe("room use cases", () => {
     await joinRoom(deps, { roomId: ids.room, userId: ids.user });
 
     expect(await deps.rooms.isMember(ids.room, ids.user)).toBe(true);
+  });
+
+  it("lists rooms for user", async () => {
+    const deps = createDeps();
+    await deps.users.save(
+      createUser({
+        id: ids.user,
+        email: emails.primary,
+        passwordHash: createPasswordHash("hashed:secret"),
+        createdAt: clock.now(),
+        lastSeenAt: null
+      })
+    );
+    await deps.rooms.save(
+      createRoom({
+        id: ids.room,
+        name: "General",
+        createdAt: clock.now(),
+        createdBy: ids.user
+      })
+    );
+    await deps.rooms.addMember(ids.room, ids.user, clock.now());
+
+    const rooms = await listRooms(deps, ids.user);
+
+    expect(rooms).toHaveLength(1);
+    expect(rooms[0]?.id).toBe(ids.room);
   });
 });

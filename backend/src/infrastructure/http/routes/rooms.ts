@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createRoomUseCase } from "../../../application/use-cases/create-room"
 import { joinRoom } from "../../../application/use-cases/join-room"
 import { listMessages } from "../../../application/use-cases/list-messages"
+import { listRooms } from "../../../application/use-cases/list-rooms"
 import { sendMessage } from "../../../application/use-cases/send-message"
 import { requireUserId } from "../auth"
 import { type HttpDependencies } from "../server"
@@ -31,6 +32,12 @@ const listMessagesQuerySchema = z.object({
 });
 
 export function registerRoomRoutes(app: FastifyInstance, deps: HttpDependencies) {
+  app.get("/rooms", async (request, reply) => {
+    const userId = requireUserId(request);
+    const rooms = await listRooms(deps, userId);
+    reply.status(200).send(rooms);
+  });
+
   app.post("/rooms", async (request, reply) => {
     const body = parseWithSchema(createRoomSchema, request.body);
     const userId = requireUserId(request);
